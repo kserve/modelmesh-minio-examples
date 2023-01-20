@@ -1,23 +1,36 @@
 # ModelMesh MinIO Examples
 
-This MinIO Docker image contains example models. When ModelMesh is deployed with
+This repository contains the example models and the Dockerfile to build the
+`modelmesh-minio-examples` container image. When ModelMesh is deployed with
 the `--quickstart` flag, the example models are deployed via this image.
 
-## Build the image locally
+## Build the Image
+
+Build the `modelmesh-minio-examples` docker image:
 
 ```sh
 docker build --target minio-examples -t kserve/modelmesh-minio-examples:latest .
 ```
 
-To build the `dev` image, use the `--fvt` flag:
+**Note**: When ModelMesh is [deployed with the `--fvt` flag](https://github.com/kserve/modelmesh-serving/blob/main/docs/developer.md)
+then the `modelmesh-minio-dev-examples` image will be deployed instead of the
+`modelmesh-minio-examples` image. To build the "dev" image, run the docker build
+command with the `minio-fvt` target:
 
 ```sh
 docker build --target minio-fvt -t kserve/modelmesh-minio-dev-examples:latest .
 ```
 
-## Image usage examples
+Push the newly built images to DockerHub:
 
-Start an instance of the image named `modelmesh-minio-examples` locally:
+```shell
+docker push kserve/modelmesh-minio-examples:latest
+docker push kserve/modelmesh-minio-dev-examples:latest
+```
+
+## Start the Container
+
+Start a container with the name _"modelmesh-minio-examples"_:
 
 ```sh
 docker run --rm --name "modelmesh-minio-examples" \
@@ -28,27 +41,28 @@ docker run --rm --name "modelmesh-minio-examples" \
   kserve/modelmesh-minio-examples:latest server /data1
 ```
 
-Shutdown the "modelmesh-minio-examples" docker container:
-
-```sh
-docker stop "modelmesh-minio-examples"
-docker rm "modelmesh-minio-examples"
-```
-
-### MinIO client usage examples
+## Test the Image Using the MinIO Client
 
 Install the [MinIO client](https://min.io/docs/minio/linux/reference/minio-mc.html#quickstart), `mc`.
 
-Create an alias `localminio` for an local instance:
+Create an alias `localminio` for the local MinIO instance:
 
 ```sh
 mc alias set localminio http://localhost:9000 AKIAIOSFODNN7EXAMPLE wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 ```
 
-List objects in the instance's bucket:
+List all objects in the `modelmesh-example-models` bucket:
 
 ```sh
 mc ls -r localminio/modelmesh-example-models/
 ```
 
+### Stop and Remove the Docker Container
 
+To shut down and remove the _"modelmesh-minio-examples"_ Docker container run the
+following commands:
+
+```sh
+docker stop "modelmesh-minio-examples"
+docker rm "modelmesh-minio-examples"
+```
