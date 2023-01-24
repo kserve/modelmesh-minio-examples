@@ -7,10 +7,17 @@ the `--quickstart` flag, the example models are deployed via this image.
 
 ## Build the Image
 
+Set the `DOCKER_USER` variable for the build and push process below:
+
+```sh
+# DOCKER_USER=kserve
+DOCKER_USER=<your-docker-login>
+```
+
 Build the `modelmesh-minio-examples` docker image:
 
 ```sh
-docker build --target minio-examples -t kserve/modelmesh-minio-examples:latest .
+docker build --target minio-examples -t ${DOCKER_USER}/modelmesh-minio-examples:latest .
 ```
 
 **Note**: When ModelMesh is [deployed with the `--fvt` flag](https://github.com/kserve/modelmesh-serving/blob/main/docs/developer.md)
@@ -19,14 +26,14 @@ then the `modelmesh-minio-dev-examples` image will be deployed instead of the
 command with the `minio-fvt` target:
 
 ```sh
-docker build --target minio-fvt -t kserve/modelmesh-minio-dev-examples:latest .
+docker build --target minio-fvt -t ${DOCKER_USER}/modelmesh-minio-dev-examples:latest .
 ```
 
 Push the newly built images to DockerHub:
 
 ```shell
-docker push kserve/modelmesh-minio-examples:latest
-docker push kserve/modelmesh-minio-dev-examples:latest
+docker push ${DOCKER_USER}/modelmesh-minio-examples:latest
+docker push ${DOCKER_USER}/modelmesh-minio-dev-examples:latest
 ```
 
 
@@ -40,7 +47,7 @@ docker run --rm --name "modelmesh-minio-examples" \
   -p "9000:9000" \
   -e "MINIO_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE" \
   -e "MINIO_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY" \
-  kserve/modelmesh-minio-examples:latest server /data1
+  ${DOCKER_USER}/modelmesh-minio-examples:latest server /data1
 ```
 
 
@@ -78,7 +85,44 @@ Avoid duplicating large files in the Git repository, instead use `COPY ...` in
 the `Dockerfile`.
 
 When building a new container image after making changes to the `Dockerfile`,
-check the size of the image and compare it to the `latest` image on DockerHub.
+check the size of the image and compare it to the
+[`latest`](https://hub.docker.com/r/kserve/modelmesh-minio-dev-examples/tags)
+image on DockerHub.
+
+You can also compare the contents of the Docker images by using the `du` command
+line utility to summarize disk usage of the files and folders recursively:
+
+```sh
+for user in kserve ${DOCKER_USER}; do
+  docker run --rm --entrypoint bash ${user}/modelmesh-minio-dev-examples:latest \
+    -c "du --max-depth=5 --all /data1/modelmesh-example-models/" | \
+  sort -r -k 2 > file_sizes_${user}.txt
+done
+
+diff -U0 --minimal file_sizes_*.txt | \
+  sed 's/^-/\x1b[1;31m-/;s/^+/\x1b[1;32m+/;s/^@/\x1b[1;34m@/;s/$/\x1b[0m/'
+
+rm -f file_sizes_*.txt
+```
+
+Which should produce output similar to the one below when the `pytorch-mar-dup/mnist.mar`
+model was added:
+
+```diff
+--- file_sizes_latest.txt   2023-01-24 13:05:37
++++ file_sizes_new.txt      2023-01-24 13:05:46
+@@ -64,0 +65,2 @@
++4364   /data1/modelmesh-example-models/fvt/pytorch/pytorch-mar-dup/mnist.mar
++4368   /data1/modelmesh-example-models/fvt/pytorch/pytorch-mar-dup
+@@ -78 +80 @@
+-5184   /data1/modelmesh-example-models/fvt/pytorch
++9552   /data1/modelmesh-example-models/fvt/pytorch
+@@ -114,2 +116,2 @@
+-102836 /data1/modelmesh-example-models/fvt
+-187160 /data1/modelmesh-example-models/
++107204 /data1/modelmesh-example-models/fvt
++191528 /data1/modelmesh-example-models/
+```
 
 
 ### Troubleshooting
