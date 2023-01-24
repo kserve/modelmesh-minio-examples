@@ -1,0 +1,2 @@
+# ignore .DS_Store files in all folders, including build root
+**/.DS_Store
