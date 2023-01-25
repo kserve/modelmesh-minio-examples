@@ -28,8 +28,7 @@ jobs:
         id: meta-examples
         uses: docker/metadata-action@v4
         with:
-          images:
-            - ${{ env.IMAGE_NAME }}
+          images: ${{ env.IMAGE_NAME }}
           tags: |
             # set latest tag for default branch
             type=raw,value=latest,enable={{is_default_branch}}
@@ -40,8 +39,7 @@ jobs:
         id: meta-fvt
         uses: docker/metadata-action@v4
         with:
-          images:
-            - ${{ env.DEV_IMAGE_NAME }}
+          images: ${{ env.DEV_IMAGE_NAME }}
           tags: |
             # set latest tag for default branch
             type=raw,value=latest,enable={{is_default_branch}}
