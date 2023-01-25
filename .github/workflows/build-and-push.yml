@@ -1,0 +1,81 @@
+name: Build and Push
+
+on:
+  push:
+    branches: [ main, 'release-[0-9].[0-9]+' ]
+    tags: [ 'v*.*.*' ]
+    paths-ignore: [ '**.md' ]
+
+  pull_request:
+    branches: [ main, 'release-[0-9].[0-9]+' ]
+    paths-ignore: [ '**.md' ]
+
+env:
+  IMAGE_NAME: "kserve/modelmesh-minio-examples"
+  DEV_IMAGE_NAME: "kserve/modelmesh-minio-dev-examples"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Metadata examples image
+        id: meta-examples
+        uses: docker/metadata-action@v4
+        with:
+          images:
+            - ${{ env.IMAGE_NAME }}
+          tags: |
+            # set latest tag for default branch
+            type=raw,value=latest,enable={{is_default_branch}}
+            # use raw git tag value as image version tag
+            type=semver,pattern={{raw}}
+
+      - name: Metadata FVT image
+        id: meta-fvt
+        uses: docker/metadata-action@v4
+        with:
+          images:
+            - ${{ env.DEV_IMAGE_NAME }}
+          tags: |
+            # set latest tag for default branch
+            type=raw,value=latest,enable={{is_default_branch}}
+            # use raw git tag value as image version tag
+            type=semver,pattern={{raw}}
+
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+
+      - name: Build and push examples image
+        id: build-and-push-examples-image
+        uses: docker/build-push-action@v3
+        with:
+          # platforms: linux/amd64,linux/arm64/v8,linux/ppc64le,linux/s390x
+          # pull: true
+          target: minio-examples
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta-examples.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push FVT image
+        id: build-and-push-fvt-image
+        uses: docker/build-push-action@v3
+        with:
+          # platforms: linux/amd64,linux/arm64/v8,linux/ppc64le,linux/s390x
+          # pull: true
+          context: .
+          target: minio-fvt
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta-fvt.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
