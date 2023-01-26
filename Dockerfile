@@ -23,7 +23,9 @@ USER root
 
 RUN useradd -u 1000 -g 0 modelmesh
 RUN mkdir -p ${MODEL_DIR}
-RUN chown -R 1000:0 /data1
+RUN chown -R 1000:0 /data1 && \
+    chgrp -R 0 /data1 && \
+    chmod -R g=u /data1
 
 COPY --chown=1000:0 keras      ${MODEL_DIR}/keras/
 COPY --chown=1000:0 lightgbm   ${MODEL_DIR}/lightgbm/
