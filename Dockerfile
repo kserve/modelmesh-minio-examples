@@ -34,6 +34,7 @@ COPY --chown=1000:0 pytorch    ${MODEL_DIR}/pytorch/
 COPY --chown=1000:0 sklearn    ${MODEL_DIR}/sklearn/
 COPY --chown=1000:0 tensorflow ${MODEL_DIR}/tensorflow/
 COPY --chown=1000:0 xgboost    ${MODEL_DIR}/xgboost/
+COPY --chown=1000:0 opendatahub-demos ${MODEL_DIR}/opendatahub-demos
 
 # some models are duplicated for testing and verification
 COPY --chown=1000:0 tensorflow/mnist ${MODEL_DIR}/tensorflow/mnist.savedmodel/
