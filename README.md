@@ -1,8 +1,8 @@
 # ModelMesh MinIO Examples
 
 This repository contains the example models and the Dockerfile to build the
-`modelmesh-minio-examples` container image. When ModelMesh is deployed with
-the `--quickstart` flag, the example models are deployed via this image.
+`modelmesh-minio-examples` container image. When ModelMesh Serving is deployed
+with the `--quickstart` flag, the example models are deployed via this image.
 
 
 ## Build the Image
