@@ -29,7 +29,10 @@ RUN useradd -u 1000 -g 0 modelmesh &&\
 FROM quay.io/minio/minio:RELEASE.2024-02-26T09-33-48Z as minio
 ARG FVT_DIR
 ARG MODEL_DIR
+# API server
 EXPOSE 9000
+# Console Server
+EXPOSE 9001
 
 COPY --chown=1000:0 keras      ${MODEL_DIR}/keras/
 COPY --chown=1000:0 lightgbm   ${MODEL_DIR}/lightgbm/
