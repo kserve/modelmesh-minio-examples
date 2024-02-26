@@ -18,8 +18,6 @@ ARG FVT_DIR=/data1/modelmesh-example-models/fvt
 
 FROM quay.io/centos/stream9-minimal as os
 ARG MODEL_DIR
-EXPOSE 9000
-
 USER root
 
 RUN useradd -u 1000 -g 0 modelmesh &&\
@@ -31,6 +29,8 @@ RUN useradd -u 1000 -g 0 modelmesh &&\
 FROM quay.io/minio/minio:RELEASE.2024-02-26T09-33-48Z as minio
 ARG FVT_DIR
 ARG MODEL_DIR
+EXPOSE 9000
+
 COPY --chown=1000:0 keras      ${MODEL_DIR}/keras/
 COPY --chown=1000:0 lightgbm   ${MODEL_DIR}/lightgbm/
 COPY --chown=1000:0 onnx       ${MODEL_DIR}/onnx/
