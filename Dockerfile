@@ -13,20 +13,24 @@
 # limitations under the License.
 
 # Using specific tag for now, there was some reason newer minio versions didn't work
-FROM quay.io/cloudservices/minio:RELEASE.2021-06-17T00-10-46Z.hotfix.35a0912ff as minio-examples
-
-EXPOSE 9000
-
 ARG MODEL_DIR=/data1/modelmesh-example-models
+ARG FVT_DIR=/data1/modelmesh-example-models/fvt
+
+FROM quay.io/centos/stream9-minimal as os
+ARG MODEL_DIR
+EXPOSE 9000
 
 USER root
 
-RUN useradd -u 1000 -g 0 modelmesh
-RUN mkdir -p ${MODEL_DIR}
-RUN chown -R 1000:0 /data1 && \
+RUN useradd -u 1000 -g 0 modelmesh &&\
+    mkdir -p ${MODEL_DIR} &&\
+    chown -R 1000:0 /data1 && \
     chgrp -R 0 /data1 && \
     chmod -R g=u /data1
 
+FROM quay.io/minio/minio:RELEASE.2024-02-26T09-33-48Z as minio
+ARG FVT_DIR
+ARG MODEL_DIR
 COPY --chown=1000:0 keras      ${MODEL_DIR}/keras/
 COPY --chown=1000:0 lightgbm   ${MODEL_DIR}/lightgbm/
 COPY --chown=1000:0 onnx       ${MODEL_DIR}/onnx/
@@ -38,18 +42,6 @@ COPY --chown=1000:0 xgboost    ${MODEL_DIR}/xgboost/
 # some models are duplicated for testing and verification
 COPY --chown=1000:0 tensorflow/mnist ${MODEL_DIR}/tensorflow/mnist.savedmodel/
 
-USER 1000
-
-
-# Image with additional models used in the FVTs
-FROM minio-examples as minio-fvt
-
-ARG FVT_DIR=/data1/modelmesh-example-models/fvt
-
-USER root
-
-COPY --chown=1000:0 fvt ${FVT_DIR}/
-
 # some models are duplicated for FVT testing and verification
 COPY --chown=1000:0 keras                    ${FVT_DIR}/keras/
 COPY --chown=1000:0 keras                    ${FVT_DIR}/tensorflow/keras-mnist/
@@ -57,5 +49,6 @@ COPY --chown=1000:0 keras                    ${FVT_DIR}/tensorflow/keras-mnistne
 COPY --chown=1000:0 tensorflow/mnist         ${FVT_DIR}/tensorflow/mnist.savedmodel/
 COPY --chown=1000:0 tensorflow/mnist         ${FVT_DIR}/tensorflow/mnist-dup.savedmodel/
 COPY --chown=1000:0 fvt/pytorch/pytorch-mar  ${FVT_DIR}/pytorch/pytorch-mar-dup/
+COPY --chown=1000:0 fvt ${FVT_DIR}/
 
 USER 1000
