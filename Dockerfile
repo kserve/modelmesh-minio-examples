@@ -13,22 +13,10 @@
 # limitations under the License.
 
 # Using specific tag for now, there was some reason newer minio versions didn't work
-ARG MODEL_DIR=/data1/modelmesh-example-models
-ARG FVT_DIR=/data1/modelmesh-example-models/fvt
-
-FROM quay.io/centos/stream9-minimal as os
-ARG MODEL_DIR
-USER root
-
-RUN useradd -u 1000 -g 0 modelmesh &&\
-    mkdir -p ${MODEL_DIR} &&\
-    chown -R 1000:0 /data1 && \
-    chgrp -R 0 /data1 && \
-    chmod -R g=u /data1
 
 FROM quay.io/minio/minio:RELEASE.2024-02-26T09-33-48Z as minio
-ARG FVT_DIR
-ARG MODEL_DIR
+ARG MODEL_DIR=/data1/modelmesh-example-models
+ARG FVT_DIR=/data1/modelmesh-example-models/fvt
 # API server
 EXPOSE 9000
 # Console Server
