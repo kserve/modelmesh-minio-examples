@@ -43,12 +43,13 @@ COPY --chown=1000:0 xgboost    ${MODEL_DIR}/xgboost/
 COPY --chown=1000:0 tensorflow/mnist ${MODEL_DIR}/tensorflow/mnist.savedmodel/
 
 # some models are duplicated for FVT testing and verification
+COPY --chown=1000:0 fvt ${FVT_DIR}/
 COPY --chown=1000:0 keras                    ${FVT_DIR}/keras/
 COPY --chown=1000:0 keras                    ${FVT_DIR}/tensorflow/keras-mnist/
 COPY --chown=1000:0 keras                    ${FVT_DIR}/tensorflow/keras-mnistnew/
 COPY --chown=1000:0 tensorflow/mnist         ${FVT_DIR}/tensorflow/mnist.savedmodel/
 COPY --chown=1000:0 tensorflow/mnist         ${FVT_DIR}/tensorflow/mnist-dup.savedmodel/
 COPY --chown=1000:0 fvt/pytorch/pytorch-mar  ${FVT_DIR}/pytorch/pytorch-mar-dup/
-COPY --chown=1000:0 fvt ${FVT_DIR}/
+
 
 USER 1000
