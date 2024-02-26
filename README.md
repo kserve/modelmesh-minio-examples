@@ -45,9 +45,10 @@ Start a container with the name _"modelmesh-minio-examples"_:
 docker run --rm --name "modelmesh-minio-examples" \
   -u "1000" \
   -p "9000:9000" \
+  -p "9001:9001" \
   -e "MINIO_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE" \
   -e "MINIO_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY" \
-  ${DOCKER_USER}/modelmesh-minio-examples:latest server /data1
+  ${DOCKER_USER}/modelmesh-minio-examples:latest server /data1 --console-address ":9001"
 ```
 
 
