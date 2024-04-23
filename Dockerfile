@@ -12,8 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Using specific tag for now, there was some reason newer minio versions didn't work
-FROM quay.io/cloudservices/minio:RELEASE.2021-06-17T00-10-46Z.hotfix.35a0912ff as minio-examples
+FROM quay.io/cloudservices/minio:RELEASE.2021-06-17T00-10-46Z as minio-examples
 
 EXPOSE 9000
 
