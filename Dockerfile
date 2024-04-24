@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Using specific tag to avoid newer minio versions that don't currently work
 FROM quay.io/minio/minio:RELEASE.2021-06-17T00-10-46Z as minio-examples
 
 EXPOSE 9000
