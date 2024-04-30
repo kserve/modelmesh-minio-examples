@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # Using specific tag to avoid newer minio versions that don't currently work
-FROM docker.io/minio/minio:RELEASE.2021-06-17T00-10-46Z.hotfix.35a0912ff as minio-examples
+FROM docker.io/minio/minio:RELEASE.2024-03-30T09-41-56Z as minio-examples
 
 EXPOSE 9000
 
