@@ -1,3 +1,6 @@
+> This repo has been archived. Please check out [the main KServe repo](https://github.com/kserve/kserve).
+
+
 # ModelMesh MinIO Examples
 
 This repository contains the example models and the Dockerfile to build the
